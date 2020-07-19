@@ -16,10 +16,12 @@
 namespace Ort
 {
 ImageRecognitionOrtSessionHandlerBase::ImageRecognitionOrtSessionHandlerBase(
-    const uint16_t numClasses,     //
-    const std::string& modelPath,  //
-    const std::optional<size_t>& gpuIdx, const std::optional<std::vector<std::vector<int64_t>>>& inputShapes)
-    : OrtSessionHandler(modelPath, gpuIdx, inputShapes)
+    const uint16_t numClasses,                                            //
+    const std::string& modelPath,                                         //
+    const std::optional<size_t>& gpuIdx,                                  //
+    const std::optional<std::vector<std::vector<int64_t>>>& inputShapes,  //
+    const std::optional<std::vector<std::vector<int64_t>>>& outputShapes)
+    : OrtSessionHandler(modelPath, gpuIdx, inputShapes, outputShapes)
     , m_numClasses(numClasses)
     , m_classNames()
 {

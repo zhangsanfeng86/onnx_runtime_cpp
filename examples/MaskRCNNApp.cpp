@@ -53,8 +53,9 @@ int main(int argc, char* argv[])
     int paddedH = static_cast<int>(((newH + 31) / 32) * 32);
     int paddedW = static_cast<int>(((newW + 31) / 32) * 32);
 
-    Ort::MaskRCNN osh(Ort::MSCOCO_NUM_CLASSES, ONNX_MODEL_PATH, 0,
-                      std::vector<std::vector<int64_t>>{{Ort::MaskRCNN::IMG_CHANNEL, paddedH, paddedW}});
+    const auto inputShapes = std::vector<std::vector<int64_t>>{{Ort::MaskRCNN::IMG_CHANNEL, paddedH, paddedW}};
+
+    Ort::MaskRCNN osh(Ort::MSCOCO_NUM_CLASSES, ONNX_MODEL_PATH, 0, inputShapes);
 
     osh.initClassNames(Ort::MSCOCO_CLASSES);
 

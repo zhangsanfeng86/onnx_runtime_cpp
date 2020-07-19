@@ -9,15 +9,16 @@
  *
  */
 
-#include "ort_utility/ort_utility.hpp"
+#include <algorithm>
+#include <cassert>
+#include <iostream>
+#include <numeric>
+#include <sstream>
 
 #include <onnxruntime/core/providers/cuda/cuda_provider_factory.h>
 #include <onnxruntime/core/session/onnxruntime_cxx_api.h>
 
-#include <algorithm>
-#include <cassert>
-#include <numeric>
-#include <sstream>
+#include "ort_utility/ort_utility.hpp"
 
 namespace
 {
@@ -87,9 +88,11 @@ namespace Ort
 class OrtSessionHandler::OrtSessionHandlerIml
 {
  public:
-    OrtSessionHandlerIml(const std::string& modelPath,         //
-                         const std::optional<size_t>& gpuIdx,  //
-                         const std::optional<std::vector<std::vector<int64_t>>>& inputShapes);
+    OrtSessionHandlerIml(const std::string& modelPath,                                         //
+                         const std::optional<size_t>& gpuIdx,                                  //
+                         const std::optional<std::vector<std::vector<int64_t>>>& inputShapes,  //
+                         const std::optional<std::vector<std::vector<int64_t>>>& outputShapes);
+
     ~OrtSessionHandlerIml();
 
     std::vector<DataOutputType> operator()(const std::vector<float*>& inputData);
@@ -120,18 +123,21 @@ class OrtSessionHandler::OrtSessionHandlerIml
     std::vector<char*> m_outputNodeNames;
 
     bool m_inputShapesProvided = false;
+    bool m_outputShapesProvided = false;
 };
 
 //-----------------------------------------------------------------------------//
 // OrtSessionHandler
 //-----------------------------------------------------------------------------//
 
-OrtSessionHandler::OrtSessionHandler(const std::string& modelPath,         //
-                                     const std::optional<size_t>& gpuIdx,  //
-                                     const std::optional<std::vector<std::vector<int64_t>>>& inputShapes)
-    : m_piml(std::make_unique<OrtSessionHandlerIml>(modelPath,  //
-                                                    gpuIdx,     //
-                                                    inputShapes))
+OrtSessionHandler::OrtSessionHandler(const std::string& modelPath,                                         //
+                                     const std::optional<size_t>& gpuIdx,                                  //
+                                     const std::optional<std::vector<std::vector<int64_t>>>& inputShapes,  //
+                                     const std::optional<std::vector<std::vector<int64_t>>>& outputShapes)
+    : m_piml(std::make_unique<OrtSessionHandlerIml>(modelPath,    //
+                                                    gpuIdx,       //
+                                                    inputShapes,  //
+                                                    outputShapes))
 {
 }
 
@@ -149,7 +155,8 @@ std::vector<OrtSessionHandler::DataOutputType> OrtSessionHandler::operator()(con
 OrtSessionHandler::OrtSessionHandlerIml::OrtSessionHandlerIml(
     const std::string& modelPath,         //
     const std::optional<size_t>& gpuIdx,  //
-    const std::optional<std::vector<std::vector<int64_t>>>& inputShapes)
+    const std::optional<std::vector<std::vector<int64_t>>>& inputShapes,
+    const std::optional<std::vector<std::vector<int64_t>>>& outputShapes)
     : m_modelPath(modelPath)
     , m_session(nullptr)
     , m_env(nullptr)
@@ -167,6 +174,11 @@ OrtSessionHandler::OrtSessionHandlerIml::OrtSessionHandlerIml(
     if (inputShapes.has_value()) {
         m_inputShapesProvided = true;
         m_inputShapes = inputShapes.value();
+    }
+
+    if (outputShapes.has_value()) {
+        m_outputShapesProvided = true;
+        m_outputShapes = outputShapes.value();
     }
 
     this->initModelInfo();
@@ -247,10 +259,12 @@ void OrtSessionHandler::OrtSessionHandlerIml::initModelInfo()
     }
 
     for (int i = 0; i < m_numOutputs; ++i) {
-        Ort::TypeInfo typeInfo = m_session.GetOutputTypeInfo(i);
-        auto tensorInfo = typeInfo.GetTensorTypeAndShapeInfo();
+        if (!m_outputShapesProvided) {
+            Ort::TypeInfo typeInfo = m_session.GetOutputTypeInfo(i);
+            auto tensorInfo = typeInfo.GetTensorTypeAndShapeInfo();
 
-        m_outputShapes.emplace_back(tensorInfo.GetShape());
+            m_outputShapes.emplace_back(tensorInfo.GetShape());
+        }
 
         char* outputName = m_session.GetOutputName(i, m_ortAllocator);
         m_outputNodeNames.emplace_back(strdup(outputName));
@@ -282,9 +296,9 @@ operator()(const std::vector<float*>& inputData)
     inputTensors.reserve(m_numInputs);
 
     for (int i = 0; i < m_numInputs; ++i) {
-        inputTensors.emplace_back(std::move(
-            Ort::Value::CreateTensor<float>(memoryInfo, const_cast<float*>(inputData[i]), m_inputTensorSizes[i],
-                                            m_inputShapes[i].data(), m_inputShapes[i].size())));
+        inputTensors.emplace_back(Ort::Value::CreateTensor<float>(memoryInfo, const_cast<float*>(inputData[i]),
+                                                                  m_inputTensorSizes[i], m_inputShapes[i].data(),
+                                                                  m_inputShapes[i].size()));
     }
 
     auto outputTensors = m_session.Run(Ort::RunOptions{nullptr}, m_inputNodeNames.data(), inputTensors.data(),

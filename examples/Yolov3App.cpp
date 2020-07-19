@@ -14,8 +14,8 @@
 #include "Utility.hpp"
 #include "Yolov3.hpp"
 
-static const std::vector<std::string> BIRD_CLASSES = {"bird_small", "bird_medium", "bird_large"};
-static constexpr int64_t BIRD_NUM_CLASSES = 3;
+static const std::vector<std::string> BIRD_CLASSES = {"bird"};
+static constexpr int64_t BIRD_NUM_CLASSES = 1;
 static const std::vector<std::array<int, 3>> BIRD_COLOR_CHART = Ort::generateColorCharts(BIRD_NUM_CLASSES);
 
 static constexpr const float CONFIDENCE_THRESHOLD = 0.2;
@@ -45,9 +45,14 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    Ort::Yolov3 osh(
-        BIRD_NUM_CLASSES, ONNX_MODEL_PATH, 0,
-        std::vector<std::vector<int64_t>>{{1, Ort::Yolov3::IMG_CHANNEL, Ort::Yolov3::IMG_H, Ort::Yolov3::IMG_W}});
+    const auto inputShapes =
+        std::vector<std::vector<int64_t>>{{1, Ort::Yolov3::IMG_CHANNEL, Ort::Yolov3::IMG_H, Ort::Yolov3::IMG_W}};
+
+    // 1: batch size
+    // 30324: total number of anchors, supposed to be changed accordingly to the size of feature map
+    // 6: xcenter, ycenter, width, height, confidence, class
+    const auto outputShapes = std::vector<std::vector<int64_t>>{{1, 30324, 6}};
+    Ort::Yolov3 osh(BIRD_NUM_CLASSES, ONNX_MODEL_PATH, 0, inputShapes, outputShapes);
 
     osh.initClassNames(BIRD_CLASSES);
 

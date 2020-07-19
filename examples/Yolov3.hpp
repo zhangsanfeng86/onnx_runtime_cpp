@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <string>
 #include <tuple>
 #include <vector>
 
@@ -23,16 +24,17 @@ namespace Ort
 class Yolov3 : public ImageRecognitionOrtSessionHandlerBase
 {
  public:
-    static constexpr int64_t IMG_H = 800;
+    static constexpr int64_t IMG_H = 608;
 
-    static constexpr int64_t IMG_W = 800;
+    static constexpr int64_t IMG_W = 608;
 
     static constexpr int64_t IMG_CHANNEL = 3;
 
-    Yolov3(const uint16_t numClasses,                           //
-           const std::string& modelPath,                        //
-           const std::optional<size_t>& gpuIdx = std::nullopt,  //
-           const std::optional<std::vector<std::vector<int64_t>>>& inputShapes = std::nullopt);
+    Yolov3(const uint16_t numClasses,                                                           //
+           const std::string& modelPath,                                                        //
+           const std::optional<size_t>& gpuIdx = std::nullopt,                                  //
+           const std::optional<std::vector<std::vector<int64_t>>>& inputShapes = std::nullopt,  //
+           const std::optional<std::vector<std::vector<int64_t>>>& outputShapes = std::nullopt);
 
     ~Yolov3();
 

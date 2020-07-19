@@ -25,9 +25,10 @@ class OrtSessionHandler
     // DataOutputType->(pointer to output data, shape of output data)
     using DataOutputType = std::pair<float*, std::vector<int64_t>>;
 
-    OrtSessionHandler(const std::string& modelPath,  //
-                      const std::optional<size_t>& gpuIdx = std::nullopt,
-                      const std::optional<std::vector<std::vector<int64_t>>>& inputShapes = std::nullopt);
+    OrtSessionHandler(const std::string& modelPath,                                                        //
+                      const std::optional<size_t>& gpuIdx = std::nullopt,                                  //
+                      const std::optional<std::vector<std::vector<int64_t>>>& inputShapes = std::nullopt,  //
+                      const std::optional<std::vector<std::vector<int64_t>>>& outputShapes = std::nullopt);
     ~OrtSessionHandler();
 
     // multiple inputs, multiple outputs

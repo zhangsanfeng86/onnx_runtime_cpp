@@ -38,10 +38,11 @@ class TinyYolov2 : public ImageRecognitionOrtSessionHandlerBase
 
     static constexpr float ANCHORS[10] = {1.08, 1.19, 3.42, 4.41, 6.63, 11.38, 9.42, 5.11, 16.62, 10.52};
 
-    TinyYolov2(const uint16_t numClasses,                           //
-               const std::string& modelPath,                        //
-               const std::optional<size_t>& gpuIdx = std::nullopt,  //
-               const std::optional<std::vector<std::vector<int64_t>>>& inputShapes = std::nullopt);
+    TinyYolov2(const uint16_t numClasses,                                                           //
+               const std::string& modelPath,                                                        //
+               const std::optional<size_t>& gpuIdx = std::nullopt,                                  //
+               const std::optional<std::vector<std::vector<int64_t>>>& inputShapes = std::nullopt,  //
+               const std::optional<std::vector<std::vector<int64_t>>>& outputShapes = std::nullopt);
 
     ~TinyYolov2();
 

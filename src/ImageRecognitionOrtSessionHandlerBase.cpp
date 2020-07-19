@@ -16,10 +16,15 @@
 namespace Ort
 {
 ImageRecognitionOrtSessionHandlerBase::ImageRecognitionOrtSessionHandlerBase(
-    const uint16_t numClasses,     //
-    const std::string& modelPath,  //
-    const std::optional<size_t>& gpuIdx, const std::optional<std::vector<std::vector<int64_t>>>& inputShapes)
-    : OrtSessionHandler(modelPath, gpuIdx, inputShapes)
+    const uint16_t numClasses,                                            //
+    const std::string& modelPath,                                         //
+    const std::optional<size_t>& gpuIdx,                                  //
+    const std::optional<std::vector<std::vector<int64_t>>>& inputShapes,  //
+    const std::optional<std::vector<std::vector<int64_t>>>& outputShapes)
+    : OrtSessionHandler(modelPath,    //
+                        gpuIdx,       //
+                        inputShapes,  //
+                        outputShapes)
     , m_numClasses(numClasses)
     , m_classNames()
 {
@@ -55,7 +60,7 @@ void ImageRecognitionOrtSessionHandlerBase::preprocess(float* dst,              
                                                        const std::vector<float>& stdVal) const
 {
     if (!meanVal.empty() && !stdVal.empty()) {
-        assert(meanVal.size() == stdVal.size() && meanVal.size() == numChannels);
+        assert(meanVal.size() == stdVal.size() && meanVal.size() == static_cast<std::size_t>(numChannels));
     }
 
     int64_t dataLength = targetImgHeight * targetImgWidth * numChannels;

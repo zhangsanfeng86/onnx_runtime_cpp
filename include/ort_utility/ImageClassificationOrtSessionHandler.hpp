@@ -21,10 +21,11 @@ class ImageClassificationOrtSessionHandler : public ImageRecognitionOrtSessionHa
 {
  public:
     ImageClassificationOrtSessionHandler(
-        const uint16_t numClasses,                           //
-        const std::string& modelPath,                        //
-        const std::optional<size_t>& gpuIdx = std::nullopt,  //
-        const std::optional<std::vector<std::vector<int64_t>>>& inputShapes = std::nullopt);
+        const uint16_t numClasses,                                                           //
+        const std::string& modelPath,                                                        //
+        const std::optional<size_t>& gpuIdx = std::nullopt,                                  //
+        const std::optional<std::vector<std::vector<int64_t>>>& inputShapes = std::nullopt,  //
+        const std::optional<std::vector<std::vector<int64_t>>>& outputShapes = std::nullopt);
 
     ~ImageClassificationOrtSessionHandler();
 

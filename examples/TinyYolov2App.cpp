@@ -36,9 +36,10 @@ int main(int argc, char* argv[])
     const std::string ONNX_MODEL_PATH = argv[1];
     const std::string IMAGE_PATH = argv[2];
 
-    Ort::TinyYolov2 osh(Ort::VOC_NUM_CLASSES, ONNX_MODEL_PATH, 0,
-                        std::vector<std::vector<int64_t>>{{1, Ort::TinyYolov2::IMG_CHANNEL, Ort::TinyYolov2::IMG_WIDTH,
-                                                           Ort::TinyYolov2::IMG_HEIGHT}});
+    const auto inputShapes = std::vector<std::vector<int64_t>>{
+        {1, Ort::TinyYolov2::IMG_CHANNEL, Ort::TinyYolov2::IMG_WIDTH, Ort::TinyYolov2::IMG_HEIGHT}};
+    const auto outputShapes = std::vector<std::vector<int64_t>>{{1, 125, 13, 13}};
+    Ort::TinyYolov2 osh(Ort::VOC_NUM_CLASSES, ONNX_MODEL_PATH, 0, inputShapes, outputShapes);
 
     osh.initClassNames(Ort::VOC_CLASSES);
     std::array<float, Ort::TinyYolov2::IMG_WIDTH * Ort::TinyYolov2::IMG_HEIGHT * Ort::TinyYolov2::IMG_CHANNEL> dst;

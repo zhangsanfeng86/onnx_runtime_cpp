@@ -14,11 +14,11 @@
 #include "Utility.hpp"
 #include "Yolov3.hpp"
 
-static const std::vector<std::string> BIRD_CLASSES = {"bird_small", "bird_medium", "bird_large"};
-static constexpr int64_t BIRD_NUM_CLASSES = 3;
+static const std::vector<std::string> BIRD_CLASSES = {"bird"};
+static constexpr int64_t BIRD_NUM_CLASSES = 1;
 static const std::vector<std::array<int, 3>> BIRD_COLOR_CHART = Ort::generateColorCharts(BIRD_NUM_CLASSES);
 
-static constexpr const float CONFIDENCE_THRESHOLD = 0.2;
+static constexpr const float CONFIDENCE_THRESHOLD = 0.3;
 static constexpr const float NMS_THRESHOLD = 0.6;
 static const std::vector<cv::Scalar> COLORS = toCvScalarColors(BIRD_COLOR_CHART);
 
@@ -47,13 +47,13 @@ int main(int argc, char* argv[])
 
     Ort::Yolov3 osh(
         BIRD_NUM_CLASSES, ONNX_MODEL_PATH, 0,
-        std::vector<std::vector<int64_t>>{{1, Ort::Yolov3::IMG_CHANNEL, Ort::Yolov3::IMG_H, Ort::Yolov3::IMG_W}});
+        std::vector<std::vector<int64_t>>{{2, Ort::Yolov3::IMG_CHANNEL, Ort::Yolov3::IMG_H, Ort::Yolov3::IMG_W}});
 
     osh.initClassNames(BIRD_CLASSES);
 
-    std::vector<float> dst(Ort::Yolov3::IMG_CHANNEL * Ort::Yolov3::IMG_H * Ort::Yolov3::IMG_W);
-    auto result = processOneFrame(osh, img, dst.data());
-    cv::imwrite("result.jpg", result);
+    // std::vector<float> dst(Ort::Yolov3::IMG_CHANNEL * Ort::Yolov3::IMG_H * Ort::Yolov3::IMG_W);
+    // auto result = processOneFrame(osh, img, dst.data());
+    // cv::imwrite("result.jpg", result);
 
     return 0;
 }

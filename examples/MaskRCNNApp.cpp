@@ -53,14 +53,24 @@ int main(int argc, char* argv[])
     int paddedH = static_cast<int>(((newH + 31) / 32) * 32);
     int paddedW = static_cast<int>(((newW + 31) / 32) * 32);
 
-    Ort::MaskRCNN osh(Ort::MSCOCO_NUM_CLASSES, ONNX_MODEL_PATH, 0,
-                      std::vector<std::vector<int64_t>>{{Ort::MaskRCNN::IMG_CHANNEL, paddedH, paddedW}});
+    const auto inputShapes = std::vector<std::vector<int64_t>>{{Ort::MaskRCNN::IMG_CHANNEL, paddedH, paddedW}};
+    Ort::MaskRCNN osh(Ort::MSCOCO_NUM_CLASSES, ONNX_MODEL_PATH, 0, inputShapes);
 
     osh.initClassNames(Ort::MSCOCO_CLASSES);
 
     std::vector<float> dst(Ort::MaskRCNN::IMG_CHANNEL * paddedH * paddedW);
 
-    auto resultImg = ::processOneFrame(osh, img, newW, newH, paddedW, paddedH, ratio, dst.data(), CONFIDENCE_THRESHOLD);
+    cv::Mat resultImg;
+
+    int TEST_TIMES = 1000;
+    std::chrono::high_resolution_clock::time_point begin = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < TEST_TIMES; ++i) {
+        resultImg = ::processOneFrame(osh, img, newW, newH, paddedW, paddedH, ratio, dst.data(), CONFIDENCE_THRESHOLD);
+    }
+    std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin);
+    std::cout << elapsedTime.count() / 1000. << "[sec]" << std::endl;
+
     cv::imwrite("result.jpg", resultImg);
 
     return EXIT_SUCCESS;

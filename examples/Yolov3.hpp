@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <string>
 #include <tuple>
 #include <vector>
 
@@ -32,7 +33,8 @@ class Yolov3 : public ImageRecognitionOrtSessionHandlerBase
     Yolov3(const uint16_t numClasses,                           //
            const std::string& modelPath,                        //
            const std::optional<size_t>& gpuIdx = std::nullopt,  //
-           const std::optional<std::vector<std::vector<int64_t>>>& inputShapes = std::nullopt);
+           const std::optional<std::vector<std::vector<int64_t>>>& inputShapes = std::nullopt,
+           const std::optional<std::vector<std::vector<int64_t>>>& outputShapes = std::nullopt);
 
     ~Yolov3();
 

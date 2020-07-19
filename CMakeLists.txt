@@ -13,7 +13,11 @@ set(onnxruntime_INCLUDE_DIRS
 
 find_library(onnxruntime_LIBS NAMES onnxruntime PATHS /usr/local/lib)
 
-find_package(OpenMP)
+find_package(OpenMP QUIET)
+
+add_compile_options(
+  "$<$<CONFIG:DEBUG>:-DDEBUG>"
+)
 
 add_subdirectory(src)
 

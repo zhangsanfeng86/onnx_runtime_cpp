@@ -166,7 +166,7 @@ inline std::vector<std::array<int, 3>> generateColorCharts(const uint16_t numCla
     std::vector<std::array<int, 3>> colors;
     colors.reserve(numClasses);
     for (uint16_t i = 0; i < numClasses; ++i) {
-        colors.emplace_back(std::array<int, 3>{std::rand() % 255, std::rand() % 255, std::rand() % 255});
+        colors.emplace_back(std::array<int, 3>{std::rand() % 256, std::rand() % 256, std::rand() % 256});
     }
 
     return colors;

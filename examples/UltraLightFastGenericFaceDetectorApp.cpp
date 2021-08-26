@@ -14,8 +14,8 @@ static constexpr int64_t FACE_NUM_CLASSES = 1;
 static const std::vector<std::array<int, 3>> FACE_COLOR_CHART =
     Ort::generateColorCharts(FACE_NUM_CLASSES, 2020 /* choosing awesome 2020 as seed point */);
 
-static constexpr const float CONFIDENCE_THRESHOLD = 0.7;
-static constexpr const float NMS_THRESHOLD = 0.3;
+static constexpr float CONFIDENCE_THRESHOLD = 0.7;
+static constexpr float NMS_THRESHOLD = 0.3;
 static const std::vector<cv::Scalar> COLORS = toCvScalarColors(FACE_COLOR_CHART);
 
 namespace

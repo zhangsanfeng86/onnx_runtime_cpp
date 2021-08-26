@@ -17,8 +17,8 @@
 #include "TinyYolov2.hpp"
 #include "Utility.hpp"
 
-static constexpr const float CONFIDENCE_THRESHOLD = 0.5;
-static constexpr const float NMS_THRESHOLD = 0.6;
+static constexpr float CONFIDENCE_THRESHOLD = 0.5;
+static constexpr float NMS_THRESHOLD = 0.6;
 static const std::vector<cv::Scalar> COLORS = toCvScalarColors(Ort::VOC_COLOR_CHART);
 
 namespace

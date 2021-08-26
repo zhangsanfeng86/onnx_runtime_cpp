@@ -19,7 +19,7 @@
 #include "MaskRCNN.hpp"
 #include "Utility.hpp"
 
-static constexpr const float CONFIDENCE_THRESHOLD = 0.5;
+static constexpr float CONFIDENCE_THRESHOLD = 0.5;
 static const std::vector<cv::Scalar> COLORS = toCvScalarColors(Ort::MSCOCO_COLOR_CHART);
 
 namespace

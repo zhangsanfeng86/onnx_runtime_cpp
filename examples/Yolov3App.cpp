@@ -15,7 +15,7 @@ static const std::vector<std::string> MSCOCO_WITHOUT_BG_CLASSES(Ort::MSCOCO_CLAS
 static constexpr int64_t NUM_CLASSES = 80;
 static const std::vector<std::array<int, 3>> COLOR_CHART = Ort::generateColorCharts(NUM_CLASSES);
 
-static constexpr const float CONFIDENCE_THRESHOLD = 0.2;
+static constexpr float CONFIDENCE_THRESHOLD = 0.2;
 static const std::vector<cv::Scalar> COLORS = toCvScalarColors(COLOR_CHART);
 
 namespace

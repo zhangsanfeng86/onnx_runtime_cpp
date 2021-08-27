@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 list(APPEND EXAMPLES
   TestImageClassification
-  TestObjectDetection
+  PrimitiveTest
 )
 
 include(cmake_utility)

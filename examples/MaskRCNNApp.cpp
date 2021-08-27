@@ -109,8 +109,8 @@ cv::Mat processOneFrame(Ort::MaskRCNN& osh, const cv::Mat& inputImg, int newW, i
 
             xmin = std::max<float>(xmin, 0);
             ymin = std::max<float>(ymin, 0);
-            xmax = std::min<float>(xmax, inputImg.cols);
-            ymax = std::min<float>(ymax, inputImg.rows);
+            xmax = std::min<float>(xmax, inputImg.cols - 1);
+            ymax = std::min<float>(ymax, inputImg.rows - 1);
 
             bboxes.emplace_back(std::array<float, 4>{xmin, ymin, xmax, ymax});
             classIndices.emplace_back(reinterpret_cast<int64_t*>(inferenceOutput[1].first)[i]);
